@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <openai_feed>
+            <seller>
+                <name>Example Store</name>
+                <url>https://example.com/store</url>
+                <privacy_policy>https://example.com/privacy</privacy_policy>
+                <tos>https://example.com/terms</tos>
+            </seller>
+            <return_policy>
+                <url>https://example.com/returns</url>
+                <return_window>30</return_window>
+            </return_policy>
+        </openai_feed>
+    </default>
+</config>

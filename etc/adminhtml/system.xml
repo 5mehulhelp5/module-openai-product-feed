@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="angeo" translate="label" sortOrder="500" class="angeo-tab">
+            <label>Angeo</label>
+        </tab>
+        <section id="openai_feed" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>OpenAi Feed</label>
+            <tab>angeo</tab>
+            <resource>Angeo_OpenAiProductFeed::config</resource>
+            <group id="seller" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Seller</label>
+                <field id="name" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Seller Name</label>
+                </field>
+                <field id="url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Seller Url</label>
+                </field>
+                <field id="privacy_policy" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Privacy Policy</label>
+                </field>
+                <field id="tos" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Terms of service</label>
+                </field>
+            </group>
+            <group id="return_policy" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Return policy</label>
+                <field id="url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Return Policy Url</label>
+                </field>
+                <field id="return_window" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Return Window</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,28 @@
+{
+    "name": "angeo/module-openai-product-feed",
+    "version": "1.0.0",
+    "description": "OpenAI product feed generator",
+    "support": {
+      "email": "i.gryshkun@gmail.com"
+    },
+    "author": {
+        "name": "Ievgenii Gryshkun",
+        "email": "i.gryshkun@gmail.com"
+    },
+    "type": "magento2-module",
+    "require": {
+        "magento/framework": "*",
+        "php": ">=8.3"
+    },
+    "license": [
+        "MIT"
+    ],
+    "autoload": {
+      "files": [
+          "registration.php"
+      ],
+    "psr-4": {
+      "Angeo\\OpenAiProductFeed\\": ""
+    }
+  }
+}
