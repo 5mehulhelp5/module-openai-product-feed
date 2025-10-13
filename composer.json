@@ -1,6 +1,6 @@
 {
     "name": "angeo/module-openai-product-feed",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "OpenAI product feed generator",
     "support": {
       "email": "i.gryshkun@gmail.com"

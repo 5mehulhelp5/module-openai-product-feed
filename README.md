@@ -3,6 +3,7 @@
 The OpenAi Product Feed Generator for Magento 2 automatically generates a product feed based on store, powering the chatbot with inventory, and detailed product information.
 
 **This module is currently actively under development by Ievgenii Gryshkun and is open to public contributions.**
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-yellow.svg)](https://buymeacoffee.com/angeo)
 
 ## Features
 
@@ -17,9 +18,10 @@ The OpenAi Product Feed Generator for Magento 2 automatically generates a produc
 
 ## Installation
 
-### As a composer package
+You can install this module as a Composer package.
 
-**Will be released soon**
+1. `composer require angeo/module-openai-product-feed`
+2. Run `bin/magento setup:upgrade`
 
 ### As a module
 
@@ -45,3 +47,12 @@ Found a bug, have a feature suggestion or just want to help in general? Contribu
 
 
 *Have questions or need help? Contact me at i.gryshkun@gmail.com*
+
+☕ Support the Project
+
+If this module helps you save time or improve your Magento store, consider supporting development by buying me a coffee:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-yellow.svg)](https://buymeacoffee.com/angeo)
+
+Your support helps me continue maintaining and improving open-source Magento tools. Thank you! 🙏
+
