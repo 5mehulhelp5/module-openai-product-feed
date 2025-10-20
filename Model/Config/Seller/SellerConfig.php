@@ -2,7 +2,7 @@
 
 /**
  * @copyright Copyright (c) 2025 Ievgenii Gryshkun
- * @author    Ievgenii Gryshkun <i.gryshkun@gmail.com>
+ * @author    Ievgenii Gryshkun <info@angeo.dev>
  * @license   MIT
  */
 

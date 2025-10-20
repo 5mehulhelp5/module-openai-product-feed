@@ -46,7 +46,7 @@ Output file path. Relative to var directory is ["var/angeo/openai_feed/store_cod
 Found a bug, have a feature suggestion or just want to help in general? Contributions are very welcome! Check out the list of active issues or submit one yourself.
 
 
-*Have questions or need help? Contact me at i.gryshkun@gmail.com*
+*Have questions or need help? Contact me at info@angeo.dev*
 
 ☕ Support the Project
 

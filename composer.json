@@ -1,13 +1,31 @@
 {
     "name": "angeo/module-openai-product-feed",
-    "version": "1.0.1",
-    "description": "OpenAI product feed generator",
+    "version": "1.0.2",
+    "description": "Generate AI-powered product feeds with OpenAI for Magento 2. Enable smarter product data syncing, personalized recommendations, and seamless e-commerce integration.",
+    "keywords": [
+        "magento2",
+        "magento module",
+        "openai",
+        "product feed",
+        "ai product feed",
+        "ecommerce feed",
+        "openai integration",
+        "product sync",
+        "ai ecommerce",
+        "product recommendations",
+        "feed generation",
+        "smart commerce",
+        "automation",
+        "angeo"
+    ],
+    "homepage": "https://angeo.dev/",
     "support": {
-      "email": "i.gryshkun@gmail.com"
+      "email": "support@angeo.dev"
     },
     "author": {
         "name": "Ievgenii Gryshkun",
-        "email": "i.gryshkun@gmail.com"
+        "email": "info@angeo.dev",
+        "homepage": "https://angeo.dev/"
     },
     "type": "magento2-module",
     "require": {
