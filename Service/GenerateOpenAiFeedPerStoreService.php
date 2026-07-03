@@ -64,7 +64,7 @@ class GenerateOpenAiFeedPerStoreService
                 try {
                     $rows[$product->getId()] = $this->productMapper->map($product);
                 } catch (LocalizedException $exception) {
-                    throw new GenerateFeedForStoreException(
+                    throw new GenerateOpenAiFeedForStoreException(
                         __(
                             'Product can not be mapped to feed row. Product ID: %1 . Error: %2',
                             $product->getId(),
