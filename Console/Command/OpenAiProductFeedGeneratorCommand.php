@@ -38,18 +38,21 @@ class OpenAiProductFeedGeneratorCommand extends Command
         $this->setDescription(self::COMMAND_DESCRIPTION);
     }
 
-    /**
-     * @throws LocalizedException
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Starting OpenAi Product Feed generation');
 
-        $this->state->setAreaCode(Area::AREA_ADMINHTML);
+        try {
+            $this->state->setAreaCode(Area::AREA_ADMINHTML);
+        } catch (LocalizedException) {
+            // Area code is already set: safe to continue.
+        }
 
         $this->generateFeedService->execute();
 
-        $output->writeln('OpenAi Product feed job was finished successfully.');
+        $output->writeln(
+            'OpenAi Product feed job was finished. Check var/log/angeo_openai_feed.log for any skipped products.'
+        );
 
         return Cli::RETURN_SUCCESS;
     }

@@ -1,20 +1,26 @@
-# OpenAi Feed Genarator for Magento 2
+# OpenAI Product Feed Generator for Magento 2
 
-The OpenAi Product Feed Generator for Magento 2 automatically generates a product feed based on store, powering the chatbot with inventory, and detailed product information.
+Generates an [OpenAI (ChatGPT) product feed](https://developers.openai.com/commerce/specs/file-upload/products) per store view so your catalog can be discovered — and purchased — inside ChatGPT.
 
-**This module is currently actively under development by Ievgenii Gryshkun and is open to public contributions.**
+**Maintained by Ievgenii Gryshkun and open to public contributions.**
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-yellow.svg)](https://buymeacoffee.com/angeo)
 
 ## Features
 
-- [x] ChatGPT Compatible Product Feed Export
-- [ ] Add mappers for all product types
-- [ ] Add Optional attributes
-- [ ] Covers functionality with tests
+- [x] Feed columns aligned with the OpenAI Product Feed file-upload specification (Stable)
+- [x] All Magento product types: simple, virtual, downloadable, configurable, bundle, grouped
+- [x] Configurable products exported as parent listing + child variant rows (`group_id`, `variant_dict`, `item_group_title`)
+- [x] Grouped products linked via `related_product_id` / `relationship_type`
+- [x] Digital goods flagged with `is_digital`
+- [x] Fault-tolerant generation: failing products are logged and skipped, never abort the run
+- [x] Dedicated log file: `var/log/angeo_openai_feed.log`
+- [ ] Optional attributes (media gallery, reviews, Q&A)
+- [ ] Test coverage
 
 ## Requirements
 
 - PHP >= 8.3
+- Magento 2.4.x
 
 ## Installation
 
@@ -28,9 +34,29 @@ You can install this module as a Composer package.
 1. Download latest release files and extract them under `app/code/Angeo/OpenAiProductFeed`
 2. Run `bin/magento setup:upgrade`
 
+## Upgrading from 1.x
+
+Version 2.0.0 is a breaking release. Feed columns were renamed to match the OpenAI
+specification (`item_id`, `is_eligible_search`, `is_eligible_checkout`, `image_url`,
+`item_weight_unit`, `return_deadline_in_days`, …) and `ProductMapperInterface::map()`
+now returns a list of rows. See [CHANGELOG.md](CHANGELOG.md) for the full list.
+
+No data migration is needed: the `enable_search` / `enable_checkout` product
+attributes are unchanged — only the exported column names differ.
+
 ## Configuration
 
-You can find the Module's configuration under `Stores -> Settings -> Configuration -> Angeo`:
+You can find the module's configuration under `Stores -> Settings -> Configuration -> Angeo`:
+seller identity (name, URL, privacy policy, terms of service) and return policy
+(URL, return window in days). Per the OpenAI specification, `seller_privacy_policy`
+and `seller_tos` are required when checkout is enabled for a product.
+
+Two product attributes control per-product eligibility (found in the
+"OpenAI Configurations" attribute group):
+
+- **Enable Search** → exported as `is_eligible_search`
+- **Enable Checkout** → exported as `is_eligible_checkout` (automatically forced to
+  `false` in the feed when search is not enabled, per the specification)
 
 ## Product Feed
 
@@ -39,12 +65,26 @@ To generate the product feeds manually, use the `angeo:product-feed:generate` Ma
 ```
   bin/magento angeo:product-feed:generate
 ```
-Output file path. Relative to var directory is ["var/angeo/openai_feed/store_code.csv"]
+
+A cron job (`angeo_generate_openai_feed`) also runs daily at 02:00.
+
+Output file path, relative to the `var` directory: `var/angeo/openai_feed/<store_code>.csv`
+
+Skipped products and per-store summaries are written to `var/log/angeo_openai_feed.log`.
+
+## Product type handling
+
+| Type | Behavior |
+| --- | --- |
+| Simple | One row |
+| Virtual / Downloadable | One row, `is_digital=true`, no weight |
+| Configurable | Parent row (`listing_has_variations=true`) + one row per enabled child with `group_id`, `item_group_title` and JSON `variant_dict` |
+| Grouped | One row, minimal price, children listed in `related_product_id` with `relationship_type=part_of_set` |
+| Bundle | One row, minimal ("from") price for dynamic bundles, fixed price otherwise |
 
 ## Contributing
 
 Found a bug, have a feature suggestion or just want to help in general? Contributions are very welcome! Check out the list of active issues or submit one yourself.
-
 
 *Have questions or need help? Contact me at info@angeo.dev*
 
@@ -55,4 +95,3 @@ If this module helps you save time or improve your Magento store, consider suppo
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-yellow.svg)](https://buymeacoffee.com/angeo)
 
 Your support helps me continue maintaining and improving open-source Magento tools. Thank you! 🙏
-

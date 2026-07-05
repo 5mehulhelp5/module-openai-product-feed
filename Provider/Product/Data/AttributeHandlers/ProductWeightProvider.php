@@ -11,24 +11,25 @@ declare(strict_types=1);
 namespace Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductAttributeProviderInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Directory\Helper\Data;
 
+/**
+ * Provides the numeric `weight` feed field. The unit is exported separately
+ * via `item_weight_unit`, per the OpenAI feed specification.
+ */
 class ProductWeightProvider implements ProductAttributeProviderInterface
 {
     public function __construct(
-        private readonly ScopeConfigInterface $scopeConfig,
         private readonly string $attributeCode
     ) {}
 
     public function provide(ProductInterface $product): string
     {
-        return $product->getData($this->attributeCode) ?? 0 . ' ' . $this->getWeightUnit();
-    }
+        $weight = $product->getData($this->attributeCode);
 
-    private function getWeightUnit(): string
-    {
-        return $this->scopeConfig->getValue(Data::XML_PATH_WEIGHT_UNIT);
+        if ($weight === null || $weight === '' || (float) $weight <= 0) {
+            return '';
+        }
+
+        return rtrim(rtrim(number_format((float) $weight, 4, '.', ''), '0'), '.');
     }
 }

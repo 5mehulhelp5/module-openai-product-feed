@@ -1,21 +1,22 @@
 {
     "name": "angeo/module-openai-product-feed",
-    "version": "1.0.3",
-    "description": "Generate AI-powered product feeds with OpenAI for Magento 2. Enable smarter product data syncing, personalized recommendations, and seamless e-commerce integration.",
+    "version": "2.0.0",
+    "description": "OpenAI (ChatGPT) product feed generator for Magento 2. Exports a spec-compliant product feed for all product types: simple, virtual, downloadable, configurable, bundle and grouped.",
     "keywords": [
         "magento2",
         "magento module",
         "openai",
+        "chatgpt shopping",
+        "agentic commerce",
         "product feed",
         "ai product feed",
         "ecommerce feed",
         "openai integration",
         "product sync",
         "ai ecommerce",
-        "product recommendations",
         "feed generation",
         "smart commerce",
-        "automation",
+        "aeo",
         "angeo"
     ],
     "homepage": "https://angeo.dev/",
@@ -29,8 +30,13 @@
     },
     "type": "magento2-module",
     "require": {
+        "php": ">=8.3",
         "magento/framework": "*",
-        "php": ">=8.3"
+        "magento/module-catalog": "*",
+        "magento/module-store": "*",
+        "magento/module-configurable-product": "*",
+        "magento/module-grouped-product": "*",
+        "magento/module-inventory-sales-api": "*"
     },
     "license": [
         "MIT"

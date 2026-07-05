@@ -15,10 +15,12 @@ use Angeo\OpenAiProductFeed\Formatter\ProductCurrencyFormatter;
 use Angeo\OpenAiProductFeed\Resolver\ProductPriceResolver;
 
 /**
- * Provides the regular `price` feed field in `<amount> <ISO 4217>` format.
- * Works for all product types: composite types resolve to the minimal price.
+ * Provides `sale_price`: the effective final price (catalog rules,
+ * special price with date ranges, minimal price for composite types).
+ * Emits an empty string when no active discount exists, per the spec rule
+ * that sale_price must be less than or equal to price.
  */
-class ProductPriceProvider implements ProductAttributeProviderInterface
+class ProductSalePriceProvider implements ProductAttributeProviderInterface
 {
     public function __construct(
         private readonly ProductPriceResolver $priceResolver,
@@ -28,12 +30,13 @@ class ProductPriceProvider implements ProductAttributeProviderInterface
 
     public function provide(ProductInterface $product): string
     {
-        $price = $this->priceResolver->getRegularPrice($product);
+        $regular = $this->priceResolver->getRegularPrice($product);
+        $final = $this->priceResolver->getFinalPrice($product);
 
-        if ($price <= 0) {
+        if ($final <= 0 || $regular <= 0 || $final >= $regular) {
             return '';
         }
 
-        return $this->formatter->format($price, (int) $product->getStoreId());
+        return $this->formatter->format($final, (int) $product->getStoreId());
     }
 }

@@ -11,6 +11,22 @@
         </arguments>
     </type>
 
+    <!-- Dedicated feed logger: var/log/angeo_openai_feed.log -->
+    <virtualType name="Angeo\OpenAiProductFeed\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/angeo_openai_feed.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Angeo\OpenAiProductFeed\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">angeoOpenAiFeed</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Angeo\OpenAiProductFeed\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Basic (raw value) attribute handlers -->
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\SkuProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BasicProductAttributeProvider">
         <arguments>
@@ -23,26 +39,12 @@
             <argument name="attributeCode" xsi:type="string">name</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\EnableSearchProvider"
-                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BasicProductAttributeProvider">
-        <arguments>
-            <argument name="attributeCode" xsi:type="string">enable_search</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\EnableCheckoutProvider"
-                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BasicProductAttributeProvider">
-        <arguments>
-            <argument name="attributeCode" xsi:type="string">enable_checkout</argument>
-        </arguments>
-    </virtualType>
-
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\GtinProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BasicProductAttributeProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">gtin</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\MpnProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BasicProductAttributeProvider">
         <arguments>
@@ -50,34 +52,49 @@
         </arguments>
     </virtualType>
 
+    <!-- Boolean flags: lower-case true/false per OpenAI spec -->
+    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\EnableSearchProvider"
+                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BooleanProductAttributeProvider">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">enable_search</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\EnableCheckoutProvider"
+                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BooleanProductAttributeProvider">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">enable_checkout</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Plain-text description per OpenAI spec -->
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\DescriptionProvider"
-                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BasicProductAttributeProvider">
+                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\PlainTextProductAttributeProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">description</argument>
         </arguments>
     </virtualType>
 
+    <!-- Prices -->
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\PriceProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductPriceProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">price</argument>
         </arguments>
     </virtualType>
-
-    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\SpecialPriceProvider"
-                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductPriceProvider">
+    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\SalePriceProvider"
+                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductSalePriceProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">special_price</argument>
         </arguments>
     </virtualType>
 
+    <!-- Select attributes -->
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\MaterialProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\SelectProductAttributeProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">material</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\BrandProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\SelectProductAttributeProvider">
         <arguments>
@@ -85,41 +102,45 @@
         </arguments>
     </virtualType>
 
+    <!-- Weight (numeric) and item_weight_unit (separate column per spec) -->
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\WeightProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductWeightProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">weight</argument>
         </arguments>
     </virtualType>
-
-    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ImageLinkProvider"
-                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductImageLinkProvider">
+    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\WeightUnitProvider"
+                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductWeightUnitProvider">
         <arguments>
-            <argument name="attributeCode" xsi:type="string">image_link</argument>
+            <argument name="attributeCode" xsi:type="string">weight</argument>
         </arguments>
     </virtualType>
 
+    <!-- Media, category, URL, availability, inventory -->
+    <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ImageLinkProvider"
+                 type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductImageLinkProvider">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">image_url</argument>
+        </arguments>
+    </virtualType>
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\CategoryProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductCategoryProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">product_category</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\UrlProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductUrlProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">url</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\AvailabilityProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductAvailabilityProvider">
         <arguments>
             <argument name="attributeCode" xsi:type="string">availability</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\InventoryQuantityProvider"
                  type="Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductInventoryQuantityProvider">
         <arguments>
@@ -129,11 +150,35 @@
 
     <preference for="Angeo\OpenAiProductFeed\Api\ProductMapperInterface" type="Angeo\OpenAiProductFeed\Mapper\ProductMapper"/>
 
+    <!-- Product type mappers -->
     <type name="Angeo\OpenAiProductFeed\Mapper\ProductMapper">
         <arguments>
+            <argument name="logger" xsi:type="object">Angeo\OpenAiProductFeed\Logger</argument>
             <argument name="mappers" xsi:type="array">
                 <item name="simple" xsi:type="object">Angeo\OpenAiProductFeed\Mapper\Type\SimpleProductMapper</item>
+                <item name="virtual" xsi:type="object">Angeo\OpenAiProductFeed\Mapper\Type\VirtualProductMapper</item>
+                <item name="downloadable" xsi:type="object">Angeo\OpenAiProductFeed\Mapper\Type\VirtualProductMapper</item>
+                <item name="configurable" xsi:type="object">Angeo\OpenAiProductFeed\Mapper\Type\ConfigurableProductMapper</item>
+                <item name="bundle" xsi:type="object">Angeo\OpenAiProductFeed\Mapper\Type\BundleProductMapper</item>
+                <item name="grouped" xsi:type="object">Angeo\OpenAiProductFeed\Mapper\Type\GroupedProductMapper</item>
             </argument>
+        </arguments>
+    </type>
+
+    <!-- Route feed classes to the dedicated logger -->
+    <type name="Angeo\OpenAiProductFeed\Mapper\Type\AbstractProductTypeMapper">
+        <arguments>
+            <argument name="logger" xsi:type="object">Angeo\OpenAiProductFeed\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Angeo\OpenAiProductFeed\Service\GenerateOpenAiFeedService">
+        <arguments>
+            <argument name="logger" xsi:type="object">Angeo\OpenAiProductFeed\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Angeo\OpenAiProductFeed\Service\GenerateOpenAiFeedPerStoreService">
+        <arguments>
+            <argument name="logger" xsi:type="object">Angeo\OpenAiProductFeed\Logger</argument>
         </arguments>
     </type>
 

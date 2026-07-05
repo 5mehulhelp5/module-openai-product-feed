@@ -23,7 +23,7 @@ class ReturnPolicyDataProvider implements EnrichmentDataProviderInterface
     {
         return [
             'return_policy' => $this->returnPolicyConfig->getReturnPolicyUrl(),
-            'return_window' => $this->returnPolicyConfig->getReturnWindow(),
+            'return_deadline_in_days' => (string) $this->returnPolicyConfig->getReturnWindow(),
         ];
     }
 }

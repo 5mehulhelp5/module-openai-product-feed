@@ -10,42 +10,51 @@ declare(strict_types=1);
 
 namespace Angeo\OpenAiProductFeed\Service;
 
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Store\Api\Data\StoreInterface;
+use Angeo\OpenAiProductFeed\Api\ProductMapperInterface;
 use Angeo\OpenAiProductFeed\Provider\Product\ProductCollectionProvider;
 use Angeo\OpenAiProductFeed\Writer\CsvFileWriterProvider;
-use Angeo\OpenAiProductFeed\Api\ProductMapperInterface;
-use Angeo\OpenAiProductFeed\Exception\GenerateOpenAiFeedForStoreException;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Store\Api\Data\StoreInterface;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Generates the feed file for a single store view.
+ *
+ * Failures are logged and never abort the run: a failing product is skipped
+ * so the remaining catalog is still exported, and a failing writer skips
+ * only the affected store.
+ */
 class GenerateOpenAiFeedPerStoreService
 {
     public function __construct(
         private readonly ProductCollectionProvider $productsCollectionProvider,
         private readonly CsvFileWriterProvider $csvFileWriterProvider,
-        private readonly ProductMapperInterface $productMapper
+        private readonly ProductMapperInterface $productMapper,
+        private readonly LoggerInterface $logger
     ) {}
 
-    /**
-     * @throws FileSystemException
-     * @throws LocalizedException
-     */
     public function execute(StoreInterface $store): void
     {
         $storeId = (int) $store->getId();
 
         try {
             $fileWriter = $this->csvFileWriterProvider->provide($store);
-        } catch (NoSuchEntityException $exception) {
-            throw new GenerateOpenAiFeedForStoreException(
-                __('The writer cann\'t be created for the store ID: %1', $storeId),
-                $exception
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                sprintf(
+                    '[Angeo_OpenAiProductFeed] The feed writer could not be created for store ID %d, the store was skipped: %s',
+                    $storeId,
+                    $exception->getMessage()
+                ),
+                ['exception' => $exception]
             );
+
+            return;
         }
 
         $currentPage = 1;
         $rows = [];
+        $skipped = 0;
 
         do {
             $collection = $this->productsCollectionProvider->provide(
@@ -53,37 +62,66 @@ class GenerateOpenAiFeedPerStoreService
                 $storeId
             );
 
-            /** @var Product[] $items */
-            $items = $collection->getItems();
-
-            foreach ($items as $product) {
-                if (isset($rows[$product->getId()])) {
+            foreach ($collection->getItems() as $product) {
+                try {
+                    $mappedRows = $this->productMapper->map($product);
+                } catch (\Throwable $exception) {
+                    $skipped++;
+                    $this->logger->error(
+                        sprintf(
+                            '[Angeo_OpenAiProductFeed] Product could not be mapped to a feed row and was skipped. Product ID: %d, SKU: %s. Error: %s',
+                            (int) $product->getId(),
+                            (string) $product->getSku(),
+                            $exception->getMessage()
+                        ),
+                        ['exception' => $exception]
+                    );
                     continue;
                 }
 
-                try {
-                    $rows[$product->getId()] = $this->productMapper->map($product);
-                } catch (LocalizedException $exception) {
-                    throw new GenerateOpenAiFeedForStoreException(
-                        __(
-                            'Product can not be mapped to feed row. Product ID: %1 . Error: %2',
-                            $product->getId(),
-                            $exception->getMessage()
-                        ),
-                        $exception
-                    );
+                foreach ($mappedRows as $row) {
+                    $itemId = (string) ($row['item_id'] ?? '');
+
+                    if ($itemId === '' || isset($rows[$itemId])) {
+                        continue;
+                    }
+
+                    $rows[$itemId] = $row;
                 }
             }
 
             $currentPage++;
         } while ($this->canProceed($collection, $currentPage));
 
-        $fileWriter->write($rows);
+        try {
+            $fileWriter->write($rows);
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                sprintf(
+                    '[Angeo_OpenAiProductFeed] The feed file could not be written for store ID %d: %s',
+                    $storeId,
+                    $exception->getMessage()
+                ),
+                ['exception' => $exception]
+            );
+
+            return;
+        }
+
+        $this->logger->info(
+            sprintf(
+                '[Angeo_OpenAiProductFeed] Feed generated for store ID %d: %d rows written, %d products skipped.',
+                $storeId,
+                count($rows),
+                $skipped
+            )
+        );
     }
 
     private function canProceed(ProductCollection $productCollection, int $currentPage): bool
     {
         $pageSize = $productCollection->getPageSize();
+
         return $pageSize * $currentPage < $productCollection->getSize() + $pageSize;
     }
 }
