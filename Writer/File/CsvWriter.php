@@ -19,7 +19,7 @@ use Magento\Framework\Phrase;
 
 class CsvWriter
 {
-    private const string DIRECTORY_NAME = 'angeo';
+    private const DIRECTORY_NAME = 'angeo';
     private ?string $filePath = null;
 
     public function __construct(

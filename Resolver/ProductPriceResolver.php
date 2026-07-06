@@ -22,8 +22,8 @@ use Magento\Framework\Pricing\SaleableInterface;
  */
 class ProductPriceResolver
 {
-    private const string PRICE_REGULAR = 'regular_price';
-    private const string PRICE_FINAL = 'final_price';
+    private const PRICE_REGULAR = 'regular_price';
+    private const PRICE_FINAL = 'final_price';
 
     public function getRegularPrice(ProductInterface $product): float
     {

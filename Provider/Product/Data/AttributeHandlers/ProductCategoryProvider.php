@@ -24,7 +24,7 @@ class ProductCategoryProvider implements ProductAttributeProviderInterface
     /**
      * Path depth at which visible categories start (skips root + store root).
      */
-    private const int PATH_OFFSET = 2;
+    private const PATH_OFFSET = 2;
 
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,

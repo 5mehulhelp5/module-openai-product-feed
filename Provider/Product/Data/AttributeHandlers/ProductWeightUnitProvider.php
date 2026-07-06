@@ -21,7 +21,7 @@ use Magento\Store\Model\ScopeInterface;
  */
 class ProductWeightUnitProvider implements ProductAttributeProviderInterface
 {
-    private const array UNIT_MAP = [
+    private const UNIT_MAP = [
         'lbs' => 'lb',
         'kgs' => 'kg',
     ];

@@ -18,7 +18,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
  */
 class PlainTextProductAttributeProvider implements ProductAttributeProviderInterface
 {
-    private const int MAX_LENGTH = 5000;
+    private const MAX_LENGTH = 5000;
 
     public function __construct(
         private readonly string $attributeCode

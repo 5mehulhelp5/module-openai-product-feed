@@ -19,7 +19,7 @@ use Magento\Framework\Exception\LocalizedException;
 
 class ProductCollectionProvider
 {
-    private const int BATCH_SIZE = 100;
+    private const BATCH_SIZE = 100;
 
     public function __construct(
         private readonly ProductCollectionFactory $productCollectionFactory

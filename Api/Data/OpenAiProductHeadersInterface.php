@@ -21,7 +21,7 @@ namespace Angeo\OpenAiProductFeed\Api\Data;
  */
 interface OpenAiProductHeadersInterface
 {
-    public const array HEADERS = [
+    public const HEADERS = [
         'item_id',
         'gtin',
         'mpn',

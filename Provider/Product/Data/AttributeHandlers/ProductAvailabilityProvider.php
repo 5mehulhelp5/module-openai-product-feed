@@ -15,8 +15,8 @@ use Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\ProductAttri
 
 class ProductAvailabilityProvider implements ProductAttributeProviderInterface
 {
-    private const string STATUS_IN_STOCK = 'in_stock';
-    private const string STATUS_OUT_OF_STOCK = 'out_of_stock';
+    private const STATUS_IN_STOCK = 'in_stock';
+    private const STATUS_OUT_OF_STOCK = 'out_of_stock';
 
     public function __construct(
         private readonly string $attributeCode

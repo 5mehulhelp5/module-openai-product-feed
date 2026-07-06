@@ -14,8 +14,8 @@ use Magento\Framework\DataObject;
 
 class OpenAiProductAttributeData extends DataObject
 {
-    public const string FIELD_NAME = 'field_name';
-    public const string ATTRIBUTE_HANDLER = 'attribute_handler';
+    public const FIELD_NAME = 'field_name';
+    public const ATTRIBUTE_HANDLER = 'attribute_handler';
 
     public function getFieldName(): ?string
     {

@@ -1,6 +1,6 @@
 {
     "name": "angeo/module-openai-product-feed",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "OpenAI (ChatGPT) product feed generator for Magento 2. Exports a spec-compliant product feed for all product types: simple, virtual, downloadable, configurable, bundle and grouped.",
     "keywords": [
         "magento2",
@@ -21,7 +21,7 @@
     ],
     "homepage": "https://angeo.dev/",
     "support": {
-      "email": "support@angeo.dev"
+        "email": "support@angeo.dev"
     },
     "author": {
         "name": "Ievgenii Gryshkun",
@@ -30,7 +30,7 @@
     },
     "type": "magento2-module",
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.1",
         "magento/framework": "*",
         "magento/module-catalog": "*",
         "magento/module-store": "*",
@@ -42,11 +42,11 @@
         "MIT"
     ],
     "autoload": {
-      "files": [
-          "registration.php"
-      ],
-    "psr-4": {
-      "Angeo\\OpenAiProductFeed\\": ""
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Angeo\\OpenAiProductFeed\\": ""
+        }
     }
-  }
 }

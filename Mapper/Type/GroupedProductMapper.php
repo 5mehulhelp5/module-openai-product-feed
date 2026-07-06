@@ -22,7 +22,7 @@ use Magento\GroupedProduct\Model\Product\Type\Grouped;
  */
 class GroupedProductMapper extends AbstractProductTypeMapper
 {
-    private const string RELATIONSHIP_PART_OF_SET = 'part_of_set';
+    private const RELATIONSHIP_PART_OF_SET = 'part_of_set';
 
     public function map(ProductInterface $product): array
     {

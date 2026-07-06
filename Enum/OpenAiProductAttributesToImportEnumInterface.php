@@ -36,7 +36,7 @@ use Angeo\OpenAiProductFeed\Provider\Product\Data\AttributeHandlers\InventoryQua
  */
 interface OpenAiProductAttributesToImportEnumInterface
 {
-    public const array PRODUCT_ATTRIBUTES = [
+    public const PRODUCT_ATTRIBUTES = [
         'item_id' => [
             OpenAiProductAttributeData::FIELD_NAME => 'sku',
             OpenAiProductAttributeData::ATTRIBUTE_HANDLER => SkuProvider::class,

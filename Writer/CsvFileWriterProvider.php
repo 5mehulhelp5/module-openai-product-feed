@@ -16,7 +16,7 @@ use Angeo\OpenAiProductFeed\Writer\File\CsvWriterFactory;
 
 class CsvFileWriterProvider
 {
-    public const string DIRECTORY_PATH = 'angeo/openai_feed/';
+    public const DIRECTORY_PATH = 'angeo/openai_feed/';
 
     public function __construct(
         private readonly CsvWriterFactory $csvWriterFactory,

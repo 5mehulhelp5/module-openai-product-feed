@@ -1,13 +1,19 @@
 # OpenAI Product Feed Generator for Magento 2
 
-Generates an [OpenAI (ChatGPT) product feed](https://developers.openai.com/commerce/specs/file-upload/products) per store view so your catalog can be discovered — and purchased — inside ChatGPT.
+[![Latest Version](https://img.shields.io/packagist/v/angeo/module-openai-product-feed)](https://packagist.org/packages/angeo/module-openai-product-feed)
+[![Total Downloads](https://img.shields.io/packagist/dt/angeo/module-openai-product-feed)](https://packagist.org/packages/angeo/module-openai-product-feed)
+[![License](https://img.shields.io/packagist/l/angeo/module-openai-product-feed)](LICENSE)
+[![PHP Version](https://img.shields.io/packagist/dependency-v/angeo/module-openai-product-feed/php)](composer.json)
+![Magento](https://img.shields.io/badge/Magento-2.4.x-orange)
+![OpenAI Feed Spec](https://img.shields.io/badge/OpenAI%20Feed%20Spec-Stable-blue)
 
-**Maintained by Ievgenii Gryshkun and open to public contributions.**
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-yellow.svg)](https://buymeacoffee.com/angeo)
+Generates an [OpenAI (ChatGPT) product feed](https://developers.openai.com/commerce/specs/file-upload/products) per store view so your Magento catalog can be discovered — and purchased — inside ChatGPT.
+
+The exported CSV is compliant with the **OpenAI Product Feed file-upload specification (Stable)** and covers **all Magento product types**: simple, virtual, downloadable, configurable, bundle and grouped.
 
 ## Features
 
-- [x] Feed columns aligned with the OpenAI Product Feed file-upload specification (Stable)
+- [x] Feed columns aligned with the OpenAI Product Feed file-upload specification (Stable): `item_id`, `is_eligible_search`, `is_eligible_checkout`, `image_url`, `item_weight_unit`, `return_deadline_in_days`, and more
 - [x] All Magento product types: simple, virtual, downloadable, configurable, bundle, grouped
 - [x] Configurable products exported as parent listing + child variant rows (`group_id`, `variant_dict`, `item_group_title`)
 - [x] Grouped products linked via `related_product_id` / `relationship_type`
@@ -19,8 +25,8 @@ Generates an [OpenAI (ChatGPT) product feed](https://developers.openai.com/comme
 
 ## Requirements
 
-- PHP >= 8.3
-- Magento 2.4.x
+- PHP >= 8.1
+- Magento 2.4.x (Open Source or Adobe Commerce)
 
 ## Installation
 
@@ -86,12 +92,8 @@ Skipped products and per-store summaries are written to `var/log/angeo_openai_fe
 
 Found a bug, have a feature suggestion or just want to help in general? Contributions are very welcome! Check out the list of active issues or submit one yourself.
 
-*Have questions or need help? Contact me at info@angeo.dev*
+---
 
-☕ Support the Project
+**Need help with agentic commerce for Magento?** Professional support, AEO audits and implementation at [angeo.dev](https://angeo.dev/). Check how your store looks to AI agents with the free scanner at [api.angeo.dev](https://api.angeo.dev/).
 
-If this module helps you save time or improve your Magento store, consider supporting development by buying me a coffee:
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-yellow.svg)](https://buymeacoffee.com/angeo)
-
-Your support helps me continue maintaining and improving open-source Magento tools. Thank you! 🙏
+*Questions? Contact me at info@angeo.dev*

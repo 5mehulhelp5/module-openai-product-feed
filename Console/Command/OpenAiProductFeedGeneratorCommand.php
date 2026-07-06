@@ -21,8 +21,8 @@ use Angeo\OpenAiProductFeed\Service\GenerateOpenAiFeedService;
 
 class OpenAiProductFeedGeneratorCommand extends Command
 {
-    public const string COMMAND_NAME = 'angeo:product-feed:generate';
-    public const string COMMAND_DESCRIPTION = 'Execute feed generation for all store views.';
+    public const COMMAND_NAME = 'angeo:product-feed:generate';
+    public const COMMAND_DESCRIPTION = 'Execute feed generation for all store views.';
 
     public function __construct(
         private readonly State $state,
