@@ -15,8 +15,9 @@ use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Generates the feed for all store views. A failure in one store view is
- * logged and does not prevent the remaining store views from being exported.
+ * Generates the feed for all (or selected) store views. A failure in one
+ * store view is logged and does not prevent the remaining store views from
+ * being exported.
  */
 class GenerateOpenAiFeedService
 {
@@ -27,13 +28,25 @@ class GenerateOpenAiFeedService
         private readonly LoggerInterface $logger
     ) {}
 
-    public function execute(): void
+    /**
+     * @param string[] $storeCodes Limit generation to these store codes (empty = all stores)
+     * @param callable|null $progress Called with (string $storeCode, int $rowsSoFar, int $totalProducts)
+     */
+    public function execute(array $storeCodes = [], ?callable $progress = null): void
     {
         foreach ($this->storeManager->getStores() as $store) {
+            if (!empty($storeCodes) && !in_array((string) $store->getCode(), $storeCodes, true)) {
+                continue;
+            }
+
             $this->emulation->startEnvironmentEmulation($store->getId());
 
             try {
-                $this->generateFeedForStore->execute($store);
+                $storeProgress = $progress === null
+                    ? null
+                    : static fn (int $rows, int $total) => $progress((string) $store->getCode(), $rows, $total);
+
+                $this->generateFeedForStore->execute($store, $storeProgress);
             } catch (\Throwable $exception) {
                 $this->logger->error(
                     sprintf(

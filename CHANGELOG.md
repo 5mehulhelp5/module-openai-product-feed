@@ -2,6 +2,51 @@
 
 All notable changes to this module are documented in this file.
 
+## [2.1.0] - 2026-07-06
+
+### Performance
+
+Feed generation was profiled against a production benchmark (1,900
+configurable products, 5 store views, ~10,300 rows per file, 50 minutes on
+v2.0.0) and the per-product query hot spots were replaced with batch loading:
+
+- **Stock data is batch-preloaded per collection page.** Availability and
+  salable quantity are now read from a single SELECT against the MSI
+  `inventory_stock_{id}` view per page (and per configurable parent for its
+  children), replacing two or more queries per SKU. The resolver is
+  fail-open: SKUs missing from the preload fall back to the per-product
+  Magento APIs, so custom stock setups keep working.
+- **Category paths are served from an in-memory map** loaded with one
+  category collection query per store view, replacing repository lookups per
+  ancestor per product.
+- **The product collection loads an explicit attribute list** instead of
+  `addAttributeToSelect('*')`, drops the unused media-gallery join, preloads
+  URL rewrites (`addUrlRewrite`) and category IDs (`addCategoryIds`),
+  removing two more per-product lookups.
+- **Attribute option labels are memoized** when building `variant_dict`.
+
+### Added
+
+- `--store=<code>` option (repeatable) on `angeo:product-feed:generate` to
+  generate selected store views only.
+- Live per-page progress output in the CLI and total duration on completion.
+- `attributes` di.xml argument on `ProductCollectionProvider` to extend the
+  loaded attribute list for custom handlers.
+
+### Fixed
+
+- `inventory_quantity` stays empty for composite product types (configurable,
+  bundle, grouped): the batch stock preload would otherwise export `0` on
+  listing rows under the default stock, a semantic regression against v2.0.x.
+- Configurable option labels used in `variant_dict` are resolved and cached
+  per store view, so multi-store runs cannot leak labels between store views.
+
+### Changed
+
+- `variant_dict` keys are now sorted alphabetically (natural, case-
+  insensitive), making feed output deterministic and diff-friendly across
+  runs. Previously key order followed each parent's super-attribute position.
+
 ## [2.0.1] - 2026-07-06
 
 ### Changed

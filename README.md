@@ -20,6 +20,7 @@ The exported CSV is compliant with the **OpenAI Product Feed file-upload specifi
 - [x] Digital goods flagged with `is_digital`
 - [x] Fault-tolerant generation: failing products are logged and skipped, never abort the run
 - [x] Dedicated log file: `var/log/angeo_openai_feed.log`
+- [x] Batch-loaded stock and category data for large catalogs; `--store` CLI filter with live progress
 - [ ] Optional attributes (media gallery, reviews, Q&A)
 - [ ] Test coverage
 
@@ -72,7 +73,17 @@ To generate the product feeds manually, use the `angeo:product-feed:generate` Ma
   bin/magento angeo:product-feed:generate
 ```
 
-A cron job (`angeo_generate_openai_feed`) also runs daily at 02:00.
+Limit generation to specific store views with the repeatable `--store` option:
+
+```
+  bin/magento angeo:product-feed:generate --store=default --store=en_us
+```
+
+The command prints per-page progress and the total duration. A cron job (`angeo_generate_openai_feed`) also runs daily at 02:00.
+
+## Performance
+
+Generation is optimized for large catalogs: stock data (availability and salable quantity) is batch-preloaded per collection page from the MSI stock index, category paths are served from one query per store view, and the product collection loads only the attributes the feed needs. On the reference production benchmark (1,900 configurable products, 5 store views, ~10,300 rows per file) this removes tens of thousands of per-product queries compared to v2.0.x. The batch loaders are fail-open: any SKU missing from a preload falls back to the standard per-product Magento APIs, so custom MSI stock configurations keep working.
 
 Output file path, relative to the `var` directory: `var/angeo/openai_feed/<store_code>.csv`
 

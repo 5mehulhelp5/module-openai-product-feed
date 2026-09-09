@@ -12,6 +12,7 @@ namespace Angeo\OpenAiProductFeed\Service;
 
 use Angeo\OpenAiProductFeed\Api\ProductMapperInterface;
 use Angeo\OpenAiProductFeed\Provider\Product\ProductCollectionProvider;
+use Angeo\OpenAiProductFeed\Resolver\Inventory\StockDataResolver;
 use Angeo\OpenAiProductFeed\Writer\CsvFileWriterProvider;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Store\Api\Data\StoreInterface;
@@ -23,6 +24,10 @@ use Psr\Log\LoggerInterface;
  * Failures are logged and never abort the run: a failing product is skipped
  * so the remaining catalog is still exported, and a failing writer skips
  * only the affected store.
+ *
+ * Stock data for every collection page is batch-preloaded before mapping,
+ * so availability and salable quantity are resolved from memory instead of
+ * per-SKU queries.
  */
 class GenerateOpenAiFeedPerStoreService
 {
@@ -30,10 +35,14 @@ class GenerateOpenAiFeedPerStoreService
         private readonly ProductCollectionProvider $productsCollectionProvider,
         private readonly CsvFileWriterProvider $csvFileWriterProvider,
         private readonly ProductMapperInterface $productMapper,
+        private readonly StockDataResolver $stockDataResolver,
         private readonly LoggerInterface $logger
     ) {}
 
-    public function execute(StoreInterface $store): void
+    /**
+     * @param callable|null $progress Called after each page with (int $rowsSoFar, int $totalProducts)
+     */
+    public function execute(StoreInterface $store, ?callable $progress = null): void
     {
         $storeId = (int) $store->getId();
 
@@ -52,6 +61,9 @@ class GenerateOpenAiFeedPerStoreService
             return;
         }
 
+        // Stock scope is the website: never leak data between store views.
+        $this->stockDataResolver->reset();
+
         $currentPage = 1;
         $rows = [];
         $skipped = 0;
@@ -62,7 +74,13 @@ class GenerateOpenAiFeedPerStoreService
                 $storeId
             );
 
-            foreach ($collection->getItems() as $product) {
+            $items = $collection->getItems();
+
+            $this->stockDataResolver->preload(
+                array_map(static fn ($product) => (string) $product->getSku(), $items)
+            );
+
+            foreach ($items as $product) {
                 try {
                     $mappedRows = $this->productMapper->map($product);
                 } catch (\Throwable $exception) {
@@ -88,6 +106,10 @@ class GenerateOpenAiFeedPerStoreService
 
                     $rows[$itemId] = $row;
                 }
+            }
+
+            if ($progress !== null) {
+                $progress(count($rows), (int) $collection->getSize());
             }
 
             $currentPage++;
