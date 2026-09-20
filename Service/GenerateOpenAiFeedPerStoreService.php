@@ -14,6 +14,7 @@ use Angeo\OpenAiProductFeed\Api\ProductMapperInterface;
 use Angeo\OpenAiProductFeed\Provider\Product\ProductCollectionProvider;
 use Angeo\OpenAiProductFeed\Resolver\Inventory\StockDataResolver;
 use Angeo\OpenAiProductFeed\Writer\CsvFileWriterProvider;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Store\Api\Data\StoreInterface;
 use Psr\Log\LoggerInterface;
@@ -80,6 +81,7 @@ class GenerateOpenAiFeedPerStoreService
                 array_map(static fn ($product) => (string) $product->getSku(), $items)
             );
 
+            /** @var ProductInterface $product */
             foreach ($items as $product) {
                 try {
                     $mappedRows = $this->productMapper->map($product);

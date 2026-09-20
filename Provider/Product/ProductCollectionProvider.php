@@ -62,7 +62,7 @@ class ProductCollectionProvider
         $collection = $this->productCollectionFactory->create();
 
         $collection->addAttributeToSelect(array_merge(self::DEFAULT_ATTRIBUTES, $this->attributes))
-            ->addAttributeToFilter(ProductInterface::STATUS, Status::STATUS_ENABLED)
+            ->addAttributeToFilter(ProductInterface::STATUS, ['eq' => Status::STATUS_ENABLED])
             ->addAttributeToFilter(ProductInterface::VISIBILITY, [
                 'in' => [
                     Visibility::VISIBILITY_IN_CATALOG,

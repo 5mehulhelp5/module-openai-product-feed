@@ -2,6 +2,59 @@
 
 All notable changes to this module are documented in this file.
 
+## [2.1.1] - 2026-09-15
+
+A code-quality release. The feed output does not change.
+
+### Added
+
+- GitHub Actions CI (`.github/workflows/ci.yml`) on PHP 8.1–8.5: composer
+  validate, PHP lint, Magento2 coding standard,
+  PHPUnit. PHPStan runs once, in its own job on PHP 8.2, as in
+  the Mage-OS modules. Magento
+  packages come from the Mage-OS mirror.
+- `phpstan.neon` (level 5, `bitexpert/phpstan-magento`). The extension
+  generates Magento factory classes during analysis, so no stub files are
+  needed.
+- Dev dependencies: `magento/magento-coding-standard`, `phpstan/phpstan` ^2,
+  `bitexpert/phpstan-magento`.
+- `phpunit.xml` (PHPUnit 10.5) so the existing unit tests run in CI.
+
+### Changed
+
+- **`composer.json`:** PHP 8.1–8.5 declared explicitly (was `>=8.1`). Magento
+  dependencies have bounded ranges for Magento 2.4.6 – 2.4.x instead of `*`.
+  Added the core modules the code and `etc/` already use (`module-eav`,
+  `module-directory`, `module-backend`, `module-config`, `module-cron`).
+  `author` renamed to the standard `authors`; `support.issues` and
+  `support.source` added.
+- `ProductCurrencyFormatter` passes the store ID to `convertAndRound()`
+  instead of the store object. Same result.
+- The product collection filters status with `['eq' => …]`. Same SQL.
+- `ProductPriceResolver`: the fallback price read works through
+  `DataObject::getData()` only when the product is a `DataObject`.
+- The attribute-handler map references the handler virtualTypes by name
+  (`HANDLER_NS . 'SkuProvider'`) instead of `SkuProvider::class`. The
+  resulting strings are identical; static analysis no longer reports the
+  virtualTypes as missing classes.
+- Test fixture `FakeCategory` moved to its own file.
+
+### Build
+
+- Unit tests run against real Magento classes: the resolver tests use PHPUnit
+  mocks instead of hand-made Magento look-alikes, and generated factories are
+  declared by `Test/Unit/bootstrap.php`.
+
+### Documentation
+
+- README: one badge row across the suite — CI, Packagist version and
+  downloads, PHP 8.1 – 8.5, supported Magento range, Mage-OS Extension
+  Directory, license.
+
+### Quality
+
+- Magento2 coding standard: 0 errors. PHPStan level 5: no errors.
+
 ## [2.1.0] - 2026-07-06
 
 ### Performance

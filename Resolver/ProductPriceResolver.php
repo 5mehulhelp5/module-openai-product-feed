@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Angeo\OpenAiProductFeed\Resolver;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\SaleableInterface;
 
@@ -40,7 +41,7 @@ class ProductPriceResolver
     private function extract(ProductInterface $product, string $priceCode): float
     {
         if (!$product instanceof SaleableInterface) {
-            return (float) $product->getData('price');
+            return $this->rawPrice($product);
         }
 
         try {
@@ -53,7 +54,15 @@ class ProductPriceResolver
 
             return $value;
         } catch (\Throwable) {
-            return (float) $product->getData('price');
+            return $this->rawPrice($product);
         }
+    }
+
+    /** The stored price attribute, without price-model calculation. */
+    private function rawPrice(ProductInterface $product): float
+    {
+        return $product instanceof DataObject
+            ? (float) $product->getData('price')
+            : (float) $product->getPrice();
     }
 }

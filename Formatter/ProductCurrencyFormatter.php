@@ -31,7 +31,7 @@ class ProductCurrencyFormatter
     public function format(float $amount, int $storeId): string
     {
         $store = $this->storeManager->getStore($storeId);
-        $converted = $this->priceCurrency->convertAndRound($amount, $store);
+        $converted = $this->priceCurrency->convertAndRound($amount, $storeId);
 
         return number_format((float) $converted, 2, '.', '')
             . ' '

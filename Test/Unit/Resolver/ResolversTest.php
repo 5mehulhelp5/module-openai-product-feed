@@ -6,36 +6,49 @@ namespace Angeo\OpenAiProductFeed\Test\Unit\Resolver;
 
 use Angeo\OpenAiProductFeed\Resolver\Category\CategoryNameResolver;
 use Angeo\OpenAiProductFeed\Resolver\Inventory\StockDataResolver;
+use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
-use Magento\InventorySalesApi\Api\Data\StockInterface;
+use Magento\InventoryApi\Api\Data\StockInterface;
 use Magento\InventorySalesApi\Api\StockResolverInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Angeo\OpenAiProductFeed\Test\Unit\Resolver\FakeCategory;
 
 class ResolversTest extends TestCase
-// NOTE: FakeCategory fixture lives at the bottom of this file for portability
 {
     // ── CategoryNameResolver ──────────────────────────────────────────────
 
     private function categoryResolver(): CategoryNameResolver
     {
         // Tree: 1(root)/2(store root)/10 Apparel /20 Shoes /30 Sneakers ; 40 Sale under store root
-        $factory = new CollectionFactory([
+        $factory = $this->createMock(CollectionFactory::class);
+        $factory->method('create')->willReturn($this->categoryCollection([
             new FakeCategory(10, 'Apparel', '1/2/10'),
             new FakeCategory(20, 'Shoes', '1/2/10/20'),
             new FakeCategory(30, 'Sneakers', '1/2/10/20/30'),
             new FakeCategory(40, 'Sale', '1/2/40'),
             new FakeCategory(50, '', '1/2/50'), // nameless category
             new FakeCategory(60, 'Deep', '1/2/50/60'), // child of nameless
-        ]);
+        ]));
 
         return new CategoryNameResolver($factory, $this->createMock(LoggerInterface::class));
+    }
+
+    /**
+     * @param FakeCategory[] $items
+     */
+    private function categoryCollection(array $items): CategoryCollection
+    {
+        $collection = $this->createMock(CategoryCollection::class);
+        $collection->method('setStoreId')->willReturnSelf();
+        $collection->method('addAttributeToSelect')->willReturnSelf();
+        $collection->method('getIterator')->willReturn(new \ArrayIterator($items));
+
+        return $collection;
     }
 
     public function testFullPathIsBuiltWithSpecSeparator(): void
@@ -67,10 +80,9 @@ class ResolversTest extends TestCase
 
     public function testCollectionLoadedOncePerStore(): void
     {
-        $factory = $this->getMockBuilder(CollectionFactory::class)
-            ->onlyMethods(['create'])->getMock();
+        $factory = $this->createMock(CollectionFactory::class);
         $factory->expects($this->once())->method('create')
-            ->willReturn(new \Magento\Catalog\Model\ResourceModel\Category\Collection([
+            ->willReturn($this->categoryCollection([
                 new FakeCategory(10, 'A', '1/2/10'),
             ]));
 
@@ -85,15 +97,26 @@ class ResolversTest extends TestCase
     private function stockResolverWith(array $rows, int &$queryCount = 0): StockDataResolver
     {
         $connection = $this->createMock(AdapterInterface::class);
-        $connection->method('select')->willReturnCallback(fn () => new Select());
-        $connection->method('fetchAll')->willReturnCallback(function (Select $select) use ($rows, &$queryCount) {
-            $queryCount++;
-            $requested = $select->wheres[0][1] ?? [];
-            return array_values(array_filter($rows, fn ($r) => in_array($r['sku'], $requested, true)));
+        $requested = [];
+        $connection->method('select')->willReturnCallback(function () use (&$requested) {
+            $select = $this->createMock(Select::class);
+            $select->method('from')->willReturnSelf();
+            $select->method('where')->willReturnCallback(
+                function (string $cond, $value) use ($select, &$requested) {
+                    $requested = (array) $value;
+                    return $select;
+                }
+            );
+            return $select;
         });
+        $connection->method('fetchAll')->willReturnCallback(
+            function () use ($rows, &$queryCount, &$requested) {
+                $queryCount++;
+                return array_values(array_filter($rows, fn ($r) => in_array($r['sku'], $requested, true)));
+            }
+        );
 
-        $resource = $this->getMockBuilder(ResourceConnection::class)
-            ->onlyMethods(['getConnection', 'getTableName'])->getMock();
+        $resource = $this->createMock(ResourceConnection::class);
         $resource->method('getConnection')->willReturn($connection);
         $resource->method('getTableName')->willReturnArgument(0);
 
@@ -153,8 +176,7 @@ class ResolversTest extends TestCase
 
     public function testPreloadFailureIsFailOpen(): void
     {
-        $resource = $this->getMockBuilder(ResourceConnection::class)
-            ->onlyMethods(['getConnection', 'getTableName'])->getMock();
+        $resource = $this->createMock(ResourceConnection::class);
         $resource->method('getConnection')->willThrowException(new \RuntimeException('no view'));
 
         $stockApi = $this->createMock(StockResolverInterface::class);
@@ -184,16 +206,4 @@ class ResolversTest extends TestCase
         $this->assertSame(3, $count); // 1200 / 500 -> 3 chunks
         $this->assertSame(1.0, $r->getQuantity('SKU1200'));
     }
-}
-
-
-/**
- * Minimal category fixture (id / name / path) used by the resolver tests.
- */
-class FakeCategory
-{
-    public function __construct(private int $id, private string $name, private string $path) {}
-    public function getId() { return $this->id; }
-    public function getName() { return $this->name; }
-    public function getPath() { return $this->path; }
 }

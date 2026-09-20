@@ -1,11 +1,13 @@
 # OpenAI Product Feed Generator for Magento 2
 
-[![Latest Version](https://img.shields.io/packagist/v/angeo/module-openai-product-feed)](https://packagist.org/packages/angeo/module-openai-product-feed)
-[![Total Downloads](https://img.shields.io/packagist/dt/angeo/module-openai-product-feed)](https://packagist.org/packages/angeo/module-openai-product-feed)
-[![License](https://img.shields.io/packagist/l/angeo/module-openai-product-feed)](LICENSE)
-[![PHP Version](https://img.shields.io/packagist/dependency-v/angeo/module-openai-product-feed/php)](composer.json)
-![Magento](https://img.shields.io/badge/Magento-2.4.x-orange)
-![OpenAI Feed Spec](https://img.shields.io/badge/OpenAI%20Feed%20Spec-Stable-blue)
+[![CI](https://github.com/angeo-dev/module-openai-product-feed/actions/workflows/ci.yml/badge.svg)](https://github.com/angeo-dev/module-openai-product-feed/actions/workflows/ci.yml)
+[![Packagist Version](https://img.shields.io/packagist/v/angeo/module-openai-product-feed)](https://packagist.org/packages/angeo/module-openai-product-feed)
+[![Downloads](https://img.shields.io/packagist/dt/angeo/module-openai-product-feed)](https://packagist.org/packages/angeo/module-openai-product-feed)
+[![PHP](https://img.shields.io/badge/PHP-8.1%20%E2%80%93%208.5-777bb4)](composer.json)
+[![Magento](https://img.shields.io/badge/Magento-2.4.6%20%E2%80%93%202.4.9-f26322)](composer.json)
+[![Mage-OS Directory](https://img.shields.io/badge/Mage--OS-Extension%20Directory-2d7d9a)](https://directory.mage-os.org/packages/angeo/module-openai-product-feed/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![OpenAI Feed Spec](https://img.shields.io/badge/OpenAI%20Feed%20Spec-Stable-blue)](https://developers.openai.com/commerce/specs/file-upload/products)
 
 Generates an [OpenAI (ChatGPT) product feed](https://developers.openai.com/commerce/specs/file-upload/products) per store view so your Magento catalog can be discovered — and purchased — inside ChatGPT.
 
@@ -26,7 +28,7 @@ The exported CSV is compliant with the **OpenAI Product Feed file-upload specifi
 
 ## Requirements
 
-- PHP >= 8.1
+- PHP 8.1 – 8.5
 - Magento 2.4.x (Open Source or Adobe Commerce)
 
 ## Installation
